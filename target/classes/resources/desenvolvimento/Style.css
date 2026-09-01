@@ -1,0 +1,36 @@
+.teste{
+    -fx-fill: #3A3E6D;
+
+    -fx-stroke-width: 2;
+}
+
+.root {
+    -fx-background-color: #252525;
+}
+
+.titleProject{
+    -fx-text-fill: white;
+    -fx-font-size: 50px;
+}
+
+.sizeButtonsBlack{
+    -fx-max-height: 150px;
+}
+
+
+.fileCount{
+    -fx-translate-x: 100px;
+    -fx-translate-y: -16px;
+    -fx-background-color: white;
+}
+
+.buttonDirectory{
+    -fx-text-fill: White;
+    -fx-background-color: #252525;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+    -fx-font-size: 20px;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 50px;
+}

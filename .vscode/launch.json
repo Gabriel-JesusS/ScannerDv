@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ScannerDv",
+            "request": "launch",
+            "mainClass": "com.ScannerDv",
+            "projectName": "scanner-dv"
+        },
+        {
+            "type": "java",
+            "name": "JavaFX: Rodar App",
+            "request": "launch",
+            "mainClass": "com.desenvolvimento.App",
+            "vmArgs": "--module-path \"C:/Users/jesus/OneDrive/Desktop/projetosJava/javafx-sdk-21.0.10/lib\" --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}
