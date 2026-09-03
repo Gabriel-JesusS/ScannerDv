@@ -47,6 +47,15 @@ public class ScannerDv {
 
                         App app = new App();
                         App.contFile.add(nameFile);
+ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
+apiVirusTotal.FilesScanner = directorArchive;
+apiVirusTotal.main(args);
+                 //move o arquivo para o diretorio criado na propria pasta examinada
+                        try {
+                            Thread.sleep(3000); // delay de 3 segundos
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
 
 
                         Files.move(directorArchive,destino, StandardCopyOption.REPLACE_EXISTING);

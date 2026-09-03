@@ -39,7 +39,11 @@
             <version>26.0.2</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.22.1</version>
+        </dependency>
     </dependencies>
 
     <build>
