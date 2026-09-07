@@ -1,6 +1,5 @@
 package resources.desenvolvimento;
 
-import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -26,7 +25,7 @@ import static java.lang.String.valueOf;
 
 // Root (Raiz): O seu StackPane. Ele é o "pai" de todos.
 
-public class App extends Application {
+public class Interface extends Application {
 
     public static List<String> contFile = new ArrayList<>();
 

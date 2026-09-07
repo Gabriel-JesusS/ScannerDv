@@ -1,18 +1,9 @@
 package resources.desenvolvimento;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -45,8 +36,8 @@ public class ScannerDv {
                             nameFile.toLowerCase(Locale.ROOT).endsWith(".exe") ||
                             nameFile.toLowerCase(Locale.ROOT).endsWith(".txt") || nameFile.toLowerCase(Locale.ROOT).endsWith(".com")) {
 
-                        App app = new App();
-                        App.contFile.add(nameFile);
+                        Interface app = new Interface();
+                        Interface.contFile.add(nameFile);
 ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
 apiVirusTotal.FilesScanner = directorArchive;
 apiVirusTotal.main(args);
