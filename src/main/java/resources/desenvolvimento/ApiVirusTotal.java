@@ -74,7 +74,6 @@ public class ApiVirusTotal {
             System.out.println("Quantidade: " + valor.asInt());
         }
 
-// Adicione estas linhas para depurar:
         System.out.println("--- RESULTADO VIRUSTOTAL ---");
         System.out.println("Código HTTP: " + response.statusCode());
         System.out.println("Corpo da Resposta: " + response.body());
