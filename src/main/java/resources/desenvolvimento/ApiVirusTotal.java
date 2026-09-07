@@ -8,7 +8,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Properties;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class ApiVirusTotal {
@@ -52,7 +56,23 @@ public class ApiVirusTotal {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper mapper = new ObjectMapper();
 
+        JsonNode json = mapper.readTree(response.body());
+
+        JsonNode stats = json
+                .path("data")
+                .path("attributes")
+                .path("last_analysis_stats");
+
+        for (Map.Entry<String, JsonNode> campo : stats.properties()) {
+
+            String nome = campo.getKey();
+            JsonNode valor = campo.getValue();
+
+            System.out.println("Categoria: " + nome);
+            System.out.println("Quantidade: " + valor.asInt());
+        }
 
 // Adicione estas linhas para depurar:
         System.out.println("--- RESULTADO VIRUSTOTAL ---");
