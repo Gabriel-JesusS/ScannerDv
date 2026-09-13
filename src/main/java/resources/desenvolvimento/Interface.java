@@ -30,9 +30,7 @@ public class Interface extends Application {
     public static List<String> contFile = new ArrayList<>();
 
 
-    public static void main(String[] args) {
-        launch();
-    }
+
 
     @Override
     @SuppressWarnings("static-access")
@@ -110,5 +108,10 @@ public class Interface extends Application {
         root.getStyleClass().add(".root");
 
         stage.show();
+    }
+
+
+    public static void main(String[] args) {
+        launch();
     }
 }

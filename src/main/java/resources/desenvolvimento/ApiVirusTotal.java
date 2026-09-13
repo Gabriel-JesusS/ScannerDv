@@ -1,5 +1,13 @@
 package resources.desenvolvimento;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Locale;
+import java.util.Scanner;
+import java.util.stream.Stream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -14,6 +22,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
+
 
 public class ApiVirusTotal {
     public static Path FilesScanner;
@@ -70,13 +79,12 @@ public class ApiVirusTotal {
             String nome = campo.getKey();
             JsonNode valor = campo.getValue();
 
+            System.out.println("--- RESULTADO VIRUSTOTAL ---");
             System.out.println("Categoria: " + nome);
             System.out.println("Quantidade: " + valor.asInt());
         }
 
-        System.out.println("--- RESULTADO VIRUSTOTAL ---");
         System.out.println("Código HTTP: " + response.statusCode());
-        System.out.println("Corpo da Resposta: " + response.body());
-        System.out.println("----------------------------");
+
     }
 }
