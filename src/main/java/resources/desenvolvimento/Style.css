@@ -1,5 +1,5 @@
 .teste{
-    -fx-fill: #3A3E6D;
+    -fx-fill: #0C0F12;
 
     -fx-stroke-width: 2;
 }
@@ -28,10 +28,34 @@
 .buttonDirectory{
     -fx-text-fill: White;
     -fx-background-color: #252525;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
     -fx-padding: 5;
     -fx-font-size: 20px;
     -fx-pref-width: 400px;
     -fx-pref-height: 50px;
+    -fx-cursor: pointer;
+}
+
+.buttonDirectory:hover {
+
+
+}
+
+.screen{
+    -fx-fill: #222E38;
+
+
+
+}
+
+.textDataApi{
+    -fx-text-fill: White;
+    -fx-font-size: 20px;
+    -fx-alignment: top-left;
+    -fx-border-width: 5px;
+    -fx-width: 50px ;
+    -fx-border-style: solid;
+}
+
+.textDataApi .content {
+    -fx-background-color: #1a1a2e; /* fundo do TextArea */
 }

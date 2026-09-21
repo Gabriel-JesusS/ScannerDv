@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 public class ScannerDv {
 
     public static String threatsFolder = "";
-    public static String segundo = "";
 
 
     // verifica se o local esta vazio sem ameaças
@@ -27,7 +26,7 @@ public class ScannerDv {
 //cria uma condição para não criar outrar Quarentena dentro dela propria
         if (threatsFolder.endsWith("Quarentena")) {
             System.out.println("os arquivos ja estão em quarentena");
-      return;
+            return;
 
         }
 

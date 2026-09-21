@@ -3,15 +3,18 @@ package resources.desenvolvimento;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
+import javafx.scene.control.ScrollPane;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,10 +30,14 @@ import static java.lang.String.valueOf;
 
 public class Interface extends Application {
 
+    public static List<String> apiData = new ArrayList<>();
+
+    public static List<String> apiDataCategory = new ArrayList<>();
     public static List<String> contFile = new ArrayList<>();
 
-
-
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override
     @SuppressWarnings("static-access")
@@ -46,12 +53,25 @@ public class Interface extends Application {
 
 
         // titulo do projeto "Scanner de ameaças"
-        Label label = new Label("ScannerDv");
+        Label Title = new Label("ScannerDv");
 
 //envia comando para compilar o programa
         Button sendButton = new Button("Enviar");
+        // para acessar os arquivos do dispositivo
         Button threatsButton = new Button("Verifique seus arquivos! ");
-        Button quarantineButton = new Button("Arquivos encontrados:");
+        //tela onde ficara as informações encontradas
+        Rectangle quarantineScreen = new Rectangle(400, 400);
+
+        TextArea informationQuarantine = new TextArea("Arquivos encontrados");
+        informationQuarantine.setWrapText(true);
+        informationQuarantine.setEditable(false);
+        informationQuarantine.setMaxWidth(400);
+        informationQuarantine.setCursor(Cursor.DEFAULT);
+
+
+
+        informationQuarantine.setPrefRowCount(10); // altura inicial
+        informationQuarantine.setPrefWidth(200);
 
 
 // Selecione pasta para fazer um varredura de de arquivos maliciosos
@@ -70,7 +90,7 @@ public class Interface extends Application {
         sendButton.setOnAction(e -> {
 
 
-            quarantineButton.setText("Compilando...");
+            informationQuarantine.setText("Compilando...");
             new Thread(() -> {
                 //chama a classe scanner para compilar o codigo juntamente
                 ScannerDv scannerDv = new ScannerDv();
@@ -86,7 +106,7 @@ public class Interface extends Application {
 
                 Platform.runLater(() -> {
 
-                    quarantineButton.setText(valueOf("Total de arquivos:" + contFile.size()));
+                    informationQuarantine.setText( String.join("\n", apiDataCategory).replace("=", ": "));
 
                 });
 
@@ -96,22 +116,23 @@ public class Interface extends Application {
 
         Rectangle retangle = new Rectangle(750, 750);
 
-        root.getChildren().addAll(label, threatsButton, quarantineButton, sendButton);
+        //Alinhar a tela onde ficara as informações encontradas dos arquivos
+        StackPane quarantineContainer = new StackPane(quarantineScreen, informationQuarantine);
+
+
+        root.getChildren().addAll(Title, quarantineContainer, threatsButton, sendButton);
+
         containerGrup.getChildren().addAll(retangle, root);
 
         stage.setScene(scene);
         scene.getStylesheets().add("resources/desenvolvimento/Style.css");
         retangle.getStyleClass().add("teste");
-        quarantineButton.getStyleClass().add("buttonDirectory");
+        informationQuarantine.getStyleClass().add("textDataApi");
+        quarantineScreen.getStyleClass().add("Screen");
         threatsButton.getStyleClass().add("buttonDirectory");
-        label.getStyleClass().add("titleProject");
+        Title.getStyleClass().add("titleProject");
         root.getStyleClass().add(".root");
 
         stage.show();
-    }
-
-
-    public static void main(String[] args) {
-        launch();
     }
 }

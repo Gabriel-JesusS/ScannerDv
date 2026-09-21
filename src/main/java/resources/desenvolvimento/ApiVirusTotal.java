@@ -1,11 +1,11 @@
 package resources.desenvolvimento;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
 
 import java.io.IOException;
@@ -16,13 +16,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Properties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
-
 
 public class ApiVirusTotal {
     public static Path FilesScanner;
@@ -51,7 +48,10 @@ public class ApiVirusTotal {
 
         String calcularHash;
         try (InputStream fileStream = Files.newInputStream(FilesScanner)) {
-            calcularHash = DigestUtils.sha256Hex(fileStream);
+            calcularHash = DigestUtils.sha256Hex((fileStream));
+        } catch (IOException e) {
+            System.out.println(e.getMessage() + "erro Hash");
+            return;
         }
 
         String url = "https://www.virustotal.com/api/v3/files/" + calcularHash;
@@ -74,14 +74,21 @@ public class ApiVirusTotal {
                 .path("attributes")
                 .path("last_analysis_stats");
 
+
+        System.out.println("--- RESULTADO VIRUSTOTAL ---");
+        //Nome do arquivo
+        Interface.apiDataCategory.add("Name: " + FilesScanner.getFileName());
+//loop para coletar os dados do json da api
         for (Map.Entry<String, JsonNode> campo : stats.properties()) {
 
-            String nome = campo.getKey();
-            JsonNode valor = campo.getValue();
+            String Category = campo.getKey();
+            JsonNode value = campo.getValue();
 
-            System.out.println("--- RESULTADO VIRUSTOTAL ---");
-            System.out.println("Categoria: " + nome);
-            System.out.println("Quantidade: " + valor.asInt());
+
+            System.out.println("Nome: " + FilesScanner.getFileName() + "Categoria: " + Category + ":" + value.asInt() + "\n");
+            Interface.apiDataCategory.add(campo.toString());
+
+
         }
 
         System.out.println("Código HTTP: " + response.statusCode());
