@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.stream.Stream;
 
 
@@ -13,15 +12,12 @@ public class ScannerDv {
 
     public static String threatsFolder = "";
 
-
     // verifica se o local esta vazio sem ameaças
-    private static Boolean statusDiretorioVazio = true;
+    private static Boolean directorioStatus = true;
 
 
     public static void main(String[] args) {
-        Path dadosEntradaDiretorio = Paths.get(threatsFolder);
-        System.out.println(dadosEntradaDiretorio);
-        System.out.println(dadosEntradaDiretorio + ("Quarentena"));
+        Path dataInputDirectory = Paths.get(threatsFolder);
 
 //cria uma condição para não criar outrar Quarentena dentro dela propria
         if (threatsFolder.endsWith("Quarentena")) {
@@ -30,25 +26,26 @@ public class ScannerDv {
 
         }
 
-
-        Path dadosQuarentena = Paths.get(threatsFolder).resolve("Quarentena");
-        try (Stream<Path> stream = Files.list(dadosEntradaDiretorio)) {
+//caminho da pasta Quarentena
+        Path dataQuarantine = Paths.get(threatsFolder).resolve("Quarentena");
+        try (Stream<Path> stream = Files.list(dataInputDirectory)) {
             stream.forEach(directorArchive -> {
 
 
                 try {
-                    String nameFile = directorArchive.getFileName().toString();
-                    Path destino = Files.createDirectories(dadosQuarentena).resolve(nameFile);
-                    statusDiretorioVazio = false;
+                    String nameFiles = directorArchive.getFileName().toString();
+                    Path QuarantineFolder = Files.createDirectories(dataQuarantine).resolve(nameFiles);
+                    directorioStatus = false;
 
                     // Filtra extensões de interesse
-                    if (nameFile.toLowerCase(Locale.ROOT).endsWith(".bat") ||
-                            nameFile.toLowerCase(Locale.ROOT).endsWith(".exe") ||
-                            nameFile.toLowerCase(Locale.ROOT).endsWith(".txt") || nameFile.toLowerCase(Locale.ROOT).endsWith(".com")) {
-
+                    if (nameFiles.toLowerCase(Locale.ROOT).endsWith(".bat") ||
+                            nameFiles.toLowerCase(Locale.ROOT).endsWith(".exe") ||
+                            nameFiles.toLowerCase(Locale.ROOT).endsWith(".txt") || nameFiles.toLowerCase(Locale.ROOT).endsWith(".com")) {
+                    //Manda a quantidades de arquivos para uma array da classe Interface
                         Interface app = new Interface();
-                        Interface.contFile.add(nameFile);
+                        Interface.contFile.add(nameFiles);
 
+                        //manda os arquivos para API verificar o conteudo
                         ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
                         ApiVirusTotal.FilesScanner = directorArchive;
                         apiVirusTotal.main(args);
@@ -61,11 +58,11 @@ public class ScannerDv {
 
 
                         //move o arquivo para o diretorio criado na propria pasta examinada
-                        Files.move(directorArchive, destino, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println(">> AMEAÇA DETECTADA! Movendo " + nameFile + " para quarentena.");
+                        Files.move(directorArchive, QuarantineFolder, StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println(">> AMEAÇA DETECTADA! Movendo " + nameFiles + " para quarentena.");
 
                     } else {
-                        System.out.println("diretorio limpo: " + nameFile);
+                        System.out.println("diretorio limpo: " + nameFiles);
 
                     }
 
@@ -79,7 +76,7 @@ public class ScannerDv {
             System.out.println("Erro ao listar arquivos: " + e.getMessage());
         }
 
-        if (statusDiretorioVazio) {
+        if (directorioStatus) {
             System.out.println("Diretório vazio ou sem ameaças processadas.");
         } else {
             System.out.println("Processamento concluído.");

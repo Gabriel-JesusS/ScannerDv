@@ -8,19 +8,12 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.codec.digest.DigestUtils;
-
 public class ScannerDvTerminal {
 
     public static String threatsFolder = "";
 
-
     // verifica se o local esta vazio sem ameaças
-    private static Boolean statusDiretorioVazio = true;
+    private static Boolean directorioStatus = true;
 
 
     public static void main(String[] args) {
@@ -38,18 +31,18 @@ public class ScannerDvTerminal {
         }
 
 
-        Path dadosEntradaDiretorio = Paths.get(threatsFolder);
-        Path dadosQuarentena = Paths.get(threatsFolder).resolve("Quarentena");
+        Path dataInputDirectory = Paths.get(threatsFolder);
+        Path dataQuarantine = Paths.get(threatsFolder).resolve("Quarentena");
 
 
-        try (Stream<Path> stream = Files.list(dadosEntradaDiretorio)) {
+        try (Stream<Path> stream = Files.list(dataInputDirectory)) {
             stream.forEach(directorArchive -> {
 
 
                 try {
                     String nameFile = directorArchive.getFileName().toString();
-                    Path destino = Files.createDirectories(dadosQuarentena).resolve(nameFile);
-                    statusDiretorioVazio = false;
+                    Path QuarantineFolder = Files.createDirectories(dataQuarantine).resolve(nameFile);
+                    directorioStatus = false;
 
                     // Filtra extensões de interesse
                     if (nameFile.toLowerCase(Locale.ROOT).endsWith(".bat") ||
@@ -57,9 +50,11 @@ public class ScannerDvTerminal {
                             nameFile.toLowerCase(Locale.ROOT).endsWith(".txt") || nameFile.toLowerCase(Locale.ROOT).endsWith(".com")) {
 
 
+                        //manda os arquivos para API verificar o conteudo
                         ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
                         ApiVirusTotal.FilesScanner = directorArchive;
 
+                        //cria uma espera para os dados enviados para api chegarem primeiro
                         try {
                             Thread.sleep(3000); // delay de 3 segundos
                         } catch (InterruptedException ex) {
@@ -69,7 +64,7 @@ public class ScannerDvTerminal {
                         apiVirusTotal.main(args);
 
                         //move o arquivo para o diretorio criado na propria pasta examinada
-                        Files.move(directorArchive, destino, StandardCopyOption.REPLACE_EXISTING);
+                        Files.move(directorArchive, QuarantineFolder, StandardCopyOption.REPLACE_EXISTING);
                         System.out.println(">> AMEAÇA DETECTADA! Movendo " + nameFile + " para quarentena.");
 
                     } else {
@@ -87,7 +82,7 @@ public class ScannerDvTerminal {
             System.out.println("Erro ao listar arquivos: " + e.getMessage());
         }
 
-        if (statusDiretorioVazio) {
+        if (directorioStatus) {
             System.out.println("Diretório vazio ou sem ameaças processadas.");
         } else {
             System.out.println("Processamento concluído.");

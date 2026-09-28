@@ -132,7 +132,7 @@ public class Interface extends Application {
         threatsButton.getStyleClass().add("buttonDirectory");
         Title.getStyleClass().add("titleProject");
         root.getStyleClass().add(".root");
-
+        sendButton.getStyleClass().add("buttonDirectory");
         stage.show();
     }
 }
