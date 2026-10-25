@@ -1,94 +1,126 @@
 package resources.desenvolvimento;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import static resources.desenvolvimento.ApiFileEntry.DirectorialFilesFound;
+
 public class ScannerDvTerminal {
 
-    public static String threatsFolder = "";
+    public static String getDirector(Scanner scanner) {
+//Cria um loop para
+        while (true) {
+            System.out.println("digite o nome da pasta:");
+            String inputDirector = scanner.nextLine().trim();
 
-    // verifica se o local esta vazio sem ameaças
-    private static Boolean directorioStatus = true;
+            //cria uma condição para não criar outrar Quarentena dentro dela propria
+            if (inputDirector.endsWith("Quarentena")) {
 
-
-    public static void main(String[] args) {
-
-        System.out.println("digite o nome da pasta:");
-        Scanner scanner = new Scanner(System.in);
-        String directorEntry = scanner.next();
-        threatsFolder = directorEntry;
-
-        //cria uma condição para não criar outrar Quarentena dentro dela propria
-        if (directorEntry.endsWith("Quarentena")) {
-            System.out.println("os arquivos ja estão em quarentena");
-            return;
-
+                System.out.println("os arquivos ja estão em quarentena");
+                continue;
+            }
+            return inputDirector;
         }
 
+    }
 
-        Path dataInputDirectory = Paths.get(threatsFolder);
-        Path dataQuarantine = Paths.get(threatsFolder).resolve("Quarentena");
+    public static void VerificFile(String category, int value, Path filesScanner, String directorEntry) {
 
+        List<ApiFileEntry> lista = new ArrayList<>();
+        lista.add(new ApiFileEntry(category, value));
+
+        for (ApiFileEntry d : lista) {
+
+            if (d.getCategoryName() == "malicious" && d.getCategoryValue() >= 1) {
+                System.out.println("Ameaças detectadas");
+                MoveFileQuaretena(filesScanner, directorEntry);
+            }
+        }
+    }
+
+
+    public static void MoveFileQuaretena(Path filesScanner, String directorEntry) {
+        String nameFiles = filesScanner.getFileName().toString();
+        Path dataQuarantine = Paths.get(directorEntry).resolve("Quarentena");
+
+        try {
+
+            Path QuarantineFolder = Files.createDirectories(dataQuarantine).resolve(nameFiles);
+            Files.move(filesScanner, QuarantineFolder, StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+//        System.out.println(">> AMEAÇA DETECTADA! Movendo " + nameFiles + " para quarentena.");
+
+
+        System.out.println(filesScanner);
+    }
+
+
+    public static void perguntarNovaVarredura() {
+        System.out.println("\n-----------------------------------------");
+        System.out.print("Deseja realizar uma nova varredura? (s/n): ");
+        Scanner scanner = new Scanner(System.in);
+        String inputDirector = scanner.nextLine().trim();
+
+        DirectorialFilesFound.clear();
+
+        if (inputDirector.equalsIgnoreCase("n") || inputDirector.equalsIgnoreCase("nao")) {
+            System.out.println("Encerrando o programa. Até logo!");
+            System.exit(0);
+
+        }
+        main(null);
+    }
+
+
+    public static void scanningDirector(Path dataInputDirectory, String directorEntry) {
 
         try (Stream<Path> stream = Files.list(dataInputDirectory)) {
-            stream.forEach(directorArchive -> {
-
+            //filter (Files::isRegularFile) e um filtro que filtra arquivos faz com que ele apenas manda arquivos para serem processados nas demais funções
+            stream.filter(Files::isRegularFile).forEach(directorArchive -> {
+                String nameFile = directorArchive.getFileName().toString();
+                DirectorialFilesFound.add(nameFile);
 
                 try {
-                    String nameFile = directorArchive.getFileName().toString();
-                    Path QuarantineFolder = Files.createDirectories(dataQuarantine).resolve(nameFile);
-                    directorioStatus = false;
-
-                    // Filtra extensões de interesse
-                    if (nameFile.toLowerCase(Locale.ROOT).endsWith(".bat") ||
-                            nameFile.toLowerCase(Locale.ROOT).endsWith(".exe") ||
-                            nameFile.toLowerCase(Locale.ROOT).endsWith(".txt") || nameFile.toLowerCase(Locale.ROOT).endsWith(".com")) {
-
-
-                        //manda os arquivos para API verificar o conteudo
-                        ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
-                        ApiVirusTotal.FilesScanner = directorArchive;
-
-                        //cria uma espera para os dados enviados para api chegarem primeiro
-                        try {
-                            Thread.sleep(3000); // delay de 3 segundos
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-
-                        apiVirusTotal.main(args);
-
-                        //move o arquivo para o diretorio criado na propria pasta examinada
-                        Files.move(directorArchive, QuarantineFolder, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println(">> AMEAÇA DETECTADA! Movendo " + nameFile + " para quarentena.");
-
-                    } else {
-                        System.out.println("diretorio limpo: " + nameFile);
-
-                    }
-
+                    ApiVirusTotal api = new ApiVirusTotal();
+                    api.main(directorArchive, directorEntry);
 
                 } catch (Exception e) {
-                    System.err.println("Falha ao processar arquivo: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                    System.out.println(
+                            "Erro ao analisar " + nameFile + ": " + e.getMessage()
+                    );
                 }
+
             });
 
         } catch (Exception e) {
             System.out.println("Erro ao listar arquivos: " + e.getMessage());
         }
+        perguntarNovaVarredura();
+    }
 
-        if (directorioStatus) {
-            System.out.println("Diretório vazio ou sem ameaças processadas.");
-        } else {
-            System.out.println("Processamento concluído.");
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        String directorEntry = getDirector(scanner);
 
 
-        }
+        //converte a String para o tipo path para o caminho do diretorio que deseja scannear
+        Path dataInputDirectory = Paths.get(directorEntry);
+
+        scanningDirector(dataInputDirectory, directorEntry);
+
 
     }
+
+
 }

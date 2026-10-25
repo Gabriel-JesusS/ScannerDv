@@ -1,12 +1,8 @@
 package resources.desenvolvimento;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.stream.Stream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,17 +10,21 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 
-public class ApiVirusTotal {
-    public static Path FilesScanner;
+import static resources.desenvolvimento.ApiFileEntry.DirectorialFilesFound;
+import static resources.desenvolvimento.ScannerDvTerminal.VerificFile;
 
-    public void main(String[] args) throws Exception {
+
+
+public class ApiVirusTotal {
+
+
+    public void main(Path filesScanner, String directorEntry) throws Exception {
 
         Properties props = new Properties();
 
@@ -47,7 +47,7 @@ public class ApiVirusTotal {
         }
 
         String calcularHash;
-        try (InputStream fileStream = Files.newInputStream(FilesScanner)) {
+        try (InputStream fileStream = Files.newInputStream(filesScanner)) {
             calcularHash = DigestUtils.sha256Hex((fileStream));
         } catch (IOException e) {
             System.out.println(e.getMessage() + "erro Hash");
@@ -75,23 +75,27 @@ public class ApiVirusTotal {
                 .path("last_analysis_stats");
 
 
-        System.out.println("--- RESULTADO VIRUSTOTAL ---");
+        System.out.println("--- RESULTADO VIRUSTOTAL --- \n");
         //Nome do arquivo
-        Interface.apiDataCategory.add("Name: " + FilesScanner.getFileName());
+        System.out.println("Contagem de arquivos:" + DirectorialFilesFound.size());
+        System.out.println("Nome do arquivo: " + filesScanner.getFileName());
 //loop para coletar os dados do json da api
         for (Map.Entry<String, JsonNode> campo : stats.properties()) {
 
             String Category = campo.getKey();
-            JsonNode value = campo.getValue();
+            JsonNode valores = campo.getValue();
 
 
-            System.out.println("Nome: " + FilesScanner.getFileName() + "Categoria: " + Category + ":" + value.asInt() + "\n");
-            Interface.apiDataCategory.add(campo.toString());
+            System.out.println("Categoria: " + Category + ":" + valores.asInt() + "\n");
 
-
+            VerificFile(Category, valores.asInt(), filesScanner, directorEntry);
         }
 
-        System.out.println("Código HTTP: " + response.statusCode());
+
+        System.out.println("Código HTTP: " + response.statusCode() + "\n");
+
 
     }
+
+
 }

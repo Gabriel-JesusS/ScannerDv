@@ -47,8 +47,7 @@ public class ScannerDv {
 
                         //manda os arquivos para API verificar o conteudo
                         ApiVirusTotal apiVirusTotal = new ApiVirusTotal();
-                        ApiVirusTotal.FilesScanner = directorArchive;
-                        apiVirusTotal.main(args);
+                        apiVirusTotal.main(directorArchive, threatsFolder);
 
                         try {
                             Thread.sleep(3000); // delay de 3 segundos
