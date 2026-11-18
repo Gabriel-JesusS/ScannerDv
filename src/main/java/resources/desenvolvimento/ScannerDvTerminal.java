@@ -78,7 +78,8 @@ public class ScannerDvTerminal {
             System.exit(0);
 
         }
-        main(null);
+        //retorna ao loop para fazer outra varredura
+     getDirector(scanner);
     }
 
 
